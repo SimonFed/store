@@ -13,46 +13,30 @@ datasource db {
 model items {
         id          Int       @id @default(autoincrement())
         title       String    @db.VarChar(255)
-        image       String    @db.VarChar(255)
-        created_at  DateTime  @default(now())
-        updated_at  DateTime  @default(now())
-
-        location    Location  @relation(fields: [location_id], references: [id])
-        location_id Int
-        categories  ItemRelCategory[]
-    
+        description String    @db.VarChar(1000)
+        basket      basket[]
+        price       Int
+        user       users @relation(fields: [owner_id], references: [id])
+        owner_id    Int      
     @@map("items")
     }
 
-    model Location {
-        id          Int      @id @default(autoincrement())
-        title       String   @db.VarChar(255)
-        description String   @db.VarChar(255)
-        created_at  DateTime @default(now())
-        updated_at  DateTime @default(now())
-
-        items items[]
-
-        @@map("locations")
-    }
-
-    model Category {
+    model users {
         id         Int      @id @default(autoincrement())
-        title      String   @db.VarChar(255)
-        created_at DateTime @default(now())
-        updated_at DateTime @default(now())
+        name      String   @db.VarChar(255)
+        password  String   @db.VarChar(255)
+        seller    Boolean   @default(false)
+        items      items[]
+        users     basket[]
 
-        items      ItemRelCategory[]
-
-        @@map("categories")
+        @@map("users")
     }
 
-    model ItemRelCategory {
+    model basket {
         items        items @relation(fields: [items_id], references: [id])
         items_id     Int
-        category    Category @relation(fields: [category_id], references: [id])
-        category_id Int
+        users    users @relation(fields: [users_id], references: [id])
+        users_id Int
 
-        @@id([items_id, category_id])
-        @@map("item_category")
+        @@id([items_id, users_id])
     }

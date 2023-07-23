@@ -1,0 +1,22 @@
+<%- include('particles/header.ejs') %>
+
+<%- include('particles/navigation.ejs') %>
+</ul>
+
+<form action="/newauth" method="post">
+    <h2>Зарегистрирываться</h2>
+    <input type="text" name="name" placeholder="Имя">
+    <input type="password" name="password" placeholder="Пароль">
+    <div></div>
+    <h4 style="display: inline-block;">Вы продавец?</h4>
+    <select name="seller" >
+        <option value="false">Нет</option>
+        <option value="true">Да</option>
+    </select>
+    <br>
+    <button type="submit">Зарегистрирываться</button>
+    <h5 style="color: red;">Уже есть пользыватель с таким именим</h5>
+</form>
+<h4>Есть аккаунт,<a href="/singIn">Войти</a></h4> 
+
+<%- include('particles/footer.ejs') %>

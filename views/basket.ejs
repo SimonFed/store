@@ -1,0 +1,32 @@
+<%- include('particles/header.ejs') %>
+
+<%- include('particles/navigation.ejs') %>
+</ul>
+
+<% if (auth != true) {%>
+<a href="/singIn">Войти</a>
+<br><br>
+<% } else {%>
+<form action="/out" method="post">
+    <button type="submit">Выйти</button>
+</form>
+<% } %>
+<% for (let i = 0; i < items.length; i++) { %>
+    <div class="section">
+        <% if (auth == true) {%>
+            <form action="/outbasket" method="post">
+                <input type="hidden" name="items_id" value="<%=items[i].items.id%>">
+                <button type="submit">Удалить из корзины</button>
+            </form>
+        <% } %>
+        <a href="/items/<%= items[i].items.id %>">
+            <h3><%= items[i].items.title %></h2>
+                <h4>Цена <%= items[i].items.price%> рублей</h4>
+                <p><%= items[i].items.description %></p>
+            </form>
+        </a>
+    </div>
+
+<% } %>
+
+<%- include('particles/footer.ejs') %>

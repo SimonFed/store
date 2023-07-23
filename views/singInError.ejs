@@ -1,0 +1,15 @@
+<%- include('particles/header.ejs') %>
+
+<%- include('particles/navigation.ejs') %>
+</ul>
+
+<form action="/singin" method="post">
+    <h2>Войти</h2>
+    <input type="text" name="name" placeholder="Имя">
+    <input type="password" name="password" placeholder="Пароль">
+    <button type="submit">Войти</button>
+    <h5 style="color: red;">Неправильный пароль или имя</h5>
+</form>
+<h4>Нет аккаунта,<a href="/auth">Зарегистрируйтесь</a></h4> 
+
+<%- include('particles/footer.ejs') %>
