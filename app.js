@@ -37,7 +37,7 @@ function isAuth(req, res, next) {
     if (req.session.auth) {
         next();
     } else {
-        res.redirect('/singIn');
+        res.redirect('/noAuth');
     }
 };
 
@@ -222,8 +222,12 @@ app.get('/items/:id', async(req, res) => {
             user: true
         }
     })
-    console.log(items);
+    // console.log(items);
     res.render('item', {
         items:items
     })
+})
+
+app.get('/noAuth', (req, res) =>{
+    res.render('noAuth')
 })
