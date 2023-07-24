@@ -1,6 +1,9 @@
 <%- include('particles/header.ejs') %>
 
-<%- include('particles/navigation.ejs') %>
+<ul>
+    <li><a href="/">Главная</a></li>
+    <!-- <li><a href="/basket">Корзина</a></li> -->
+
 </ul>
 
 <% if (auth != true) {%>
@@ -22,6 +25,15 @@
         <a href="/items/<%= items[i].items.id %>">
             <h3><%= items[i].items.title %></h2>
                 <h4>Цена <%= items[i].items.price%> рублей</h4>
+                <form action="/1-basket" method="post" style="display: inline-block;">
+                    <input type="hidden" name="items_id" value="<%=items[i].items.id%>">
+                    <button type="submit" style="display: inline-block;">-</button>
+                </form>
+                <p style="display: inline-block;"> <%= items[i].how_many%> </p>
+                <form action="/1basket" method="post" style="display: inline-block;">
+                    <input type="hidden" name="items_id" value="<%=items[i].items.id%>">
+                    <button type="submit" style="display: inline-block;">+</button>
+                </form>
                 <p><%= items[i].items.description %></p>
             </form>
         </a>

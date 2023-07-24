@@ -35,8 +35,9 @@ model items {
     model basket {
         items        items @relation(fields: [items_id], references: [id])
         items_id     Int
-        users    users @relation(fields: [users_id], references: [id])
-        users_id Int
+        users        users @relation(fields: [users_id], references: [id])
+        users_id     Int
+        how_many     Int   @default(1)
 
         @@id([items_id, users_id])
     }

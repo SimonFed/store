@@ -1,0 +1,25 @@
+<%- include('particles/header.ejs') %>
+
+<ul>
+    <li><a href="/">Главная</a></li>
+    <!-- <li><a href="/basket">Корзина</a></li> -->
+
+</ul>
+
+<% for (let i = 0; i < items.length; i++) { %>
+    <div class="section">
+            <form action="/deleteMyItem" method="post">
+                <input type="hidden" name="id" value="<%=items[i].id%>">
+                <button type="submit">Удалить</button>
+            </form>
+        <a href="/items/<%= items[i].id %>">
+            <h3><%= items[i].title %></h2>
+                <h4>Цена <%= items[i].price %> рублей</h4>
+                <p><%= items[i].description %></p>
+            </form>
+        </a>
+    </div>
+
+<% } %>
+
+<%- include('particles/footer.ejs') %>

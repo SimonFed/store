@@ -1,6 +1,9 @@
 <%- include('particles/header.ejs') %>
 
-<%- include('particles/navigation.ejs') %>
+<ul>
+    <li><a href="/">Главная</a></li>
+    <li><a href="/basket">Корзина</a></li>
+
 <% if (auth != true) {%>
 <a href="/singIn">Войти</a>
 <br><br>
@@ -10,6 +13,7 @@
 </form>
 <% if (user.seller) {%>
     <li><a href="/newItem">Создать товар</a></li>
+    <li><a href="/myItems">Мои товары</a></li>
 <% } %>
 </ul>
 <% } %>

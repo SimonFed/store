@@ -162,6 +162,18 @@ app.post('/gobasket',isAuth, async(req, res) =>{
                 items_id: Number(items_id)
             }
         })
+    }else{
+        await prisma.basket.update({
+            where:{
+                items_id_users_id:{
+                users_id: Number(user.id),
+                items_id: Number(items_id) 
+                }
+            },
+            data:{
+                how_many:Number(olditems.how_many +1)
+            }
+        })
     }
     res.redirect('/');
 })
@@ -172,16 +184,12 @@ app.post('/outbasket',isAuth, async(req, res) =>{
     await prisma.basket.delete({
         where:{
             items_id_users_id: {
-        
-       
-                items_id: Number(items_id),
-                        
-                       
+                items_id: Number(items_id),    
                 users_id: Number(user.id),
-        },
+        }
     }
     });
-     res.redirect('/')
+     res.redirect('/basket')
 
     });
 
@@ -230,4 +238,82 @@ app.get('/items/:id', async(req, res) => {
 
 app.get('/noAuth', (req, res) =>{
     res.render('noAuth')
+})
+
+app.post('/1-basket', isAuth, async(req, res) =>{
+    const {items_id} =req.body
+    const item =await prisma.basket.findFirst({
+        where:{
+                users_id: Number(user.id),
+                items_id: Number(items_id)
+            }
+    })
+    if (item.how_many>1){
+    await prisma.basket.update({
+        where:{
+            items_id_users_id:{
+            users_id: Number(user.id),
+            items_id: Number(items_id) 
+            }
+        },
+        data:{
+            how_many:Number(item.how_many -1)
+        }
+    })
+    }else{
+        await prisma.basket.delete({
+            where:{
+                items_id_users_id: {
+                    items_id: Number(items_id),    
+                    users_id: Number(user.id),
+                }
+            }
+        })
+    }
+    res.redirect('/basket');
+})
+
+app.post('/1basket', isAuth, async(req, res) =>{
+    const{items_id} = req.body
+    const item =await prisma.basket.findFirst({
+        where:{
+                users_id: Number(user.id),
+                items_id: Number(items_id)
+            }
+    })
+    await prisma.basket.update({
+        where:{
+            items_id_users_id:{
+            users_id: Number(user.id),
+            items_id: Number(items_id) 
+            }
+        },
+        data:{
+            how_many:Number(item.how_many +1)
+        }
+    })
+    res.redirect('/basket');
+})
+
+
+app.get('/myItems', isSeller, async(req, res) =>{
+    const items = await prisma.items.findMany({
+        where:{
+            owner_id: user.id
+        }
+    })
+    res.render('myItems', {
+        items:items
+    })
+})
+
+app.post('/deleteMyItem', isSeller, async(req, res) =>{
+    const {id} = req.body
+    await prisma.items.deleteMany({
+        where:{
+            id:Number(id),
+            owner_id:user.id  
+        }
+    })
+    res.redirect('/myItems')
 })
