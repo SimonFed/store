@@ -317,3 +317,18 @@ app.post('/deleteMyItem', isSeller, async(req, res) =>{
     })
     res.redirect('/myItems')
 })
+
+app.get('/search', async(req, res) => {
+    const search = req.query.search
+    const items = await prisma.items.findMany({
+        where: {
+            title: {
+                contains: search,
+            },
+        },
+    });
+    res.render('search', {
+        items:items,
+        auth:req.session.auth
+    })
+})
