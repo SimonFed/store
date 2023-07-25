@@ -1,19 +1,21 @@
-const form = document.getElementById('myForm');
+const gobasketForm = document.querySelectorAll('.gobasket');
 
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-            const formData = new FormData(form);
+gobasketForm.forEach(form => {
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
 
-            fetch('/gobasket', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Обработка ответа от сервера, если необходимо
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('Произошла ошибка:', error);
-            });
-        });
+  const formData = new FormData(form);
+  console.log(formData.get('items_id'))
+  fetch('/gobasket', {
+    method: 'POST',
+    headers: {
+        'Content-type': "application/json",
+    },
+      body: JSON.stringify({
+        items_id:formData.get('items_id')
+    })
+}).catch(error => {
+    console.error('Произошла ошибка:', error);
+  });  
+})
+})

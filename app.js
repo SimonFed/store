@@ -148,7 +148,8 @@ app.get('/basket',isAuth, async(req, res) => {
 })
 
 app.post('/gobasket',isAuth, async(req, res) =>{
-    const {items_id} =req.body
+    const items_id =req.body.items_id
+    console.log(items_id);
     const olditems = await prisma.basket.findFirst({
         where:{
             users_id: Number(user.id),
@@ -175,7 +176,6 @@ app.post('/gobasket',isAuth, async(req, res) =>{
             }
         })
     }
-    res.redirect('/');
 })
 
 app.post('/outbasket',isAuth, async(req, res) =>{
@@ -309,12 +309,23 @@ app.get('/myItems', isSeller, async(req, res) =>{
 
 app.post('/deleteMyItem', isSeller, async(req, res) =>{
     const {id} = req.body
-    await prisma.items.deleteMany({
+    const item = await prisma.items.findFirst({
         where:{
-            id:Number(id),
-            owner_id:user.id  
+            id:Number(id)
         }
     })
+    if (item.owner_id==user.id){
+        await prisma.basket.deleteMany({
+            where:{
+                items_id:Number(id) 
+            }
+        })
+        await prisma.items.deleteMany({
+            where:{
+                id:Number(id) 
+            }
+        })
+}
     res.redirect('/myItems')
 })
 

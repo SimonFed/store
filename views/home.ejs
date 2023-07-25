@@ -26,7 +26,7 @@
 <% for (let i = 0; i < items.length; i++) { %>
     <div class="section">
         <% if (auth == true) {%>
-            <form action="/gobasket" method="post">
+            <form class='gobasket'>
                 <input type="hidden" name="items_id" value="<%=items[i].id%>">
                 <button type="submit">В корзину</button>
             </form>
