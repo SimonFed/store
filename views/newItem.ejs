@@ -11,7 +11,7 @@
     Создание товара
 </h3>
 
-<form action="/newitem" method="post">
+<form action="/newitem" method="post" enctype="multipart/form-data">
     <h4>Название товара</h4>
     <input type="text" name="title" placeholder="Название товара">
 
@@ -20,6 +20,8 @@
 
     <h4>Цена товара</h4>
     <input type="text" name="price" placeholder="Цена товара">
+
+    <input type="file" name="image">
 
     <button type="submit">Создать</button>
 </form>

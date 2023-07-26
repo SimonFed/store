@@ -1,7 +1,5 @@
 const host = 3000;
 
-let user = undefined;
-
 const path = require("path");
 const express = require("express");
 const { PrismaClient } = require('@prisma/client');
@@ -12,6 +10,10 @@ const app = express();
 const session = require('express-session');
 const { log } = require("console");
 app.use(session({ secret: "Secret", resave: false, saveUninitialized: true }));
+const multer = require("multer");
+const fs = require("fs");
+
+let user = undefined;
 
 // Парсинг json
 app.use(express.json())
@@ -31,6 +33,8 @@ app.use(express.urlencoded({ extended: true }));
 // Запуск веб-сервера по адресу http://localhost:3000
 app.listen(host);
 
+// Путь к директории для загрузок
+const upload = multer({ dest: "./public/img/" });
 
 // Middleware
 function isAuth(req, res, next) {
@@ -52,7 +56,6 @@ function isSeller(req, res, next){
  */
 app.get("/", async (req, res) => {
 const items= await prisma.items.findMany()
-
 res.render('home',{ 
 'items':items,
 auth:req.session.auth,
@@ -197,7 +200,7 @@ app.get("/newItem",(req, res) => {
    res.render('newItem');
 });
 
-app.post('/newitem',isSeller, async(req, res) =>{
+app.post('/newitem',isSeller, upload.single("image"), async(req, res) =>{
     const{title, description, price} = req.body
     const olditem = await prisma.items.findFirst({
         where:{
@@ -207,16 +210,25 @@ app.post('/newitem',isSeller, async(req, res) =>{
         }
     })
     if (olditem == null){
+        const tempPath = req.file.path;
+        const targetPath = path.join(
+            __dirname,
+            "./public/img/" + req.file.originalname
+        );
+    
+        fs.rename(tempPath, targetPath, (err) => {
+            if (err) console.log(err);
+        })
         await prisma.items.create({
             data:{
                 title,
                 description,
                 price: Number(price),
+                image_name: req.file.originalname,
                 owner_id: Number(user.id)
             }
         })
     }
-    // console.log(olditem);
     res.redirect('/');
 })
 

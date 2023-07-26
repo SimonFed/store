@@ -16,6 +16,7 @@ model items {
         description String    @db.VarChar(1000)
         basket      basket[]
         price       Int
+        image_name  String    @db.VarChar(255)
         user       users @relation(fields: [owner_id], references: [id])
         owner_id    Int      
     @@map("items")
