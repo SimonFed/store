@@ -12,8 +12,10 @@ const { log } = require("console");
 app.use(session({ secret: "Secret", resave: false, saveUninitialized: true }));
 const multer = require("multer");
 const fs = require("fs");
+const bcrypt = require("bcrypt");
 
 let user = undefined;
+const salt = bcrypt.genSaltSync(10);
 
 // Парсинг json
 app.use(express.json())
@@ -35,6 +37,12 @@ app.listen(host);
 
 // Путь к директории для загрузок
 const upload = multer({ dest: "./public/img/" });
+
+// Функции
+
+function getRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 // Middleware
 function isAuth(req, res, next) {
@@ -77,10 +85,12 @@ app.get("/authError",(req, res) => {
 
 app.post("/singin", async(req, res) => {
     const {name, password} = req.body;
+    const passwordHash = bcrypt.hashSync(password, salt)
+    // console.log(passwordHash)
     const thisUser = await prisma.users.findFirst({
         where:{
-            name, 
-            password
+            name,
+            password:passwordHash
         }
     })
     if(thisUser != null){
@@ -100,29 +110,30 @@ app.get("/auth",(req, res) => {
 app.post("/newauth", async(req, res) => {
     const {name, password, seller} = req.body;
     let selle = false;
-    if(seller == 'true') selle = true
     const oldUser = await prisma.users.findFirst({
         where:{
             name
         }
     });
     if (oldUser == null){
-        await prisma.users.create({
-            data:{
-                name,
-                password,
-                seller:selle
-            },
-        })
-        req.session.auth = true;
-        const thisUser = await prisma.users.findFirst({
-            where:{
-                name, 
-                password
-            }
-        })
-        user = thisUser;
-        res.redirect('/');
+        if(seller == 'true') selle = true
+        const passwordHash = bcrypt.hashSync(password, salt)
+        // console.log(passwordHash)
+            await prisma.users.create({
+                data:{
+                    name,
+                    password:passwordHash,
+                    seller:selle,
+                },
+            })
+            req.session.auth = true;
+            const thisUser = await prisma.users.findFirst({
+                where:{
+                    name
+                }
+            });
+            user = thisUser;
+            res.redirect('/');
     }else{
         res.redirect('/authError')
     }
