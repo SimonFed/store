@@ -85,8 +85,13 @@ app.get("/authError",(req, res) => {
 
 app.post("/singin", async(req, res) => {
     const {name, password} = req.body;
-    const passwordHash = bcrypt.hashSync(password, salt)
-    // console.log(passwordHash)
+    const oldSalt =  await prisma.users.findFirst({
+        where:{
+            name
+        }});
+    // console.log(oldSalt.salt);
+    const passwordHash = bcrypt.hashSync(password, String(oldSalt.salt))
+    // console.log(passwordHash);
     const thisUser = await prisma.users.findFirst({
         where:{
             name,
@@ -117,6 +122,7 @@ app.post("/newauth", async(req, res) => {
     });
     if (oldUser == null){
         if(seller == 'true') selle = true
+        console.log(salt)
         const passwordHash = bcrypt.hashSync(password, salt)
         // console.log(passwordHash)
             await prisma.users.create({
@@ -124,6 +130,7 @@ app.post("/newauth", async(req, res) => {
                     name,
                     password:passwordHash,
                     seller:selle,
+                    salt:salt
                 },
             })
             req.session.auth = true;
@@ -207,7 +214,7 @@ app.post('/outbasket',isAuth, async(req, res) =>{
 
     });
 
-app.get("/newItem",(req, res) => {
+app.get("/newItem",isSeller,(req, res) => {
    res.render('newItem');
 });
 

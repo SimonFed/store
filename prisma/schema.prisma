@@ -19,6 +19,7 @@ model items {
         image_name  String    @db.VarChar(255)
         user       users @relation(fields: [owner_id], references: [id])
         owner_id    Int      
+        
     @@map("items")
     }
 
@@ -29,6 +30,7 @@ model items {
         seller    Boolean   @default(false)
         items      items[]
         users     basket[]
+        salt        String    @db.VarChar(255)
 
         @@map("users")
     }
