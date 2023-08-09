@@ -1,0 +1,16 @@
+<%- include('particles/header.ejs') %>
+
+<ul>
+    <li><a href="/">Главная</a></li>
+    <li><a href="/basket">Корзина</a></li>
+</ul>
+<div>
+    <% for (let i = 0; i< comments.length; i++){ %>
+    <h3><%= comments[i].users.name %></h3>
+    <h4><%= comments[i].comment %></h4>
+    <img src="comments_img/<%= comments[i].img %>">
+    <% } %>
+
+</div>
+
+<%- include('particles/footer.ejs') %>

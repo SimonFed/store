@@ -15,6 +15,7 @@ model items {
         title       String    @db.VarChar(255)
         description String    @db.VarChar(1000)
         basket      basket[]
+        comments     comments[]
         price       Int
         image_name  String    @db.VarChar(255)
         user       users @relation(fields: [owner_id], references: [id])
@@ -30,6 +31,7 @@ model items {
         seller    Boolean   @default(false)
         items      items[]
         users     basket[]
+        comments   comments[]
         salt        String    @db.VarChar(255)
 
         @@map("users")
@@ -43,4 +45,15 @@ model items {
         how_many     Int   @default(1)
 
         @@id([items_id, users_id])
+    }
+    model comments {
+      items        items @relation(fields: [items_id], references: [id])
+      items_id     Int
+      users        users @relation(fields: [users_id], references: [id])
+      users_id     Int
+      comment      String @db.VarChar(800)
+      img          String @db.VarChar(255)
+
+      @@id([items_id, users_id])
+      @@map("comments")
     }

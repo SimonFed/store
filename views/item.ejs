@@ -10,6 +10,16 @@
     <h3>Цена <%= items.price %> рублей</h3>
     <h3><%= items.description %></h3>
     <h4>Сделано <%=items.user.name %></h4>
+    <h3>Написать комментрий к товару</h3>
+
+ <form action="/newcomment" method="post" enctype="multipart/form-data">
+    <input type="text" name="comment">
+    <input type="file" name="image">
+    <input type="hidden" name="items_id" value="<%= items.id %>">
+    <button type="submit">Создать</button>
+ </form>
+
+    <h3><a href="/comments/<%= items.id %>">Комментраии</a></h3>
 
 
 <%- include('particles/footer.ejs') %>

@@ -36,17 +36,14 @@ app.use(express.urlencoded({ extended: true }));
 app.listen(host);
 
 // Путь к директории для загрузок
-const upload = multer({ dest: "./public/img/" });
-
+const upload_item = multer({ dest: "./public/items_img/" });
+const upload_comments = multer({ dest: "./public/comments_img/" });
 // Функции
 
-function getRandomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
 
 // Middleware
 function isAuth(req, res, next) {
-    if (req.session.auth) {
+    if (req.session.auth && user!=undefined) {
         next();
     } else {
         res.redirect('/noAuth');
@@ -218,7 +215,7 @@ app.get("/newItem",isSeller,(req, res) => {
    res.render('newItem');
 });
 
-app.post('/newitem',isSeller, upload.single("image"), async(req, res) =>{
+app.post('/newitem',isSeller, upload_item.single("image"), async(req, res) =>{
     const{title, description, price} = req.body
     const olditem = await prisma.items.findFirst({
         where:{
@@ -231,7 +228,7 @@ app.post('/newitem',isSeller, upload.single("image"), async(req, res) =>{
         const tempPath = req.file.path;
         const targetPath = path.join(
             __dirname,
-            "./public/img/" + req.file.originalname
+            "./public/items_img/" + req.file.originalname
         );
     
         fs.rename(tempPath, targetPath, (err) => {
@@ -372,4 +369,45 @@ app.get('/search', async(req, res) => {
         items:items,
         auth:req.session.auth
     })
+})
+
+app.get('/comments/:items_id', async(req, res)=>{
+    const{items_id} = req.params
+    const comments = await prisma.comments.findMany({
+        where:{
+            items_id:Number(items_id)
+        },
+        include:{
+            users:true
+        }
+    })
+    res.render('comments', {
+        comments:comments
+    })
+})
+
+app.get('/newComment', isAuth, (req, res)=> {
+    res.render('newComment')
+})
+
+app.post('/newcomment', isAuth, upload_comments.single("image"), async(req, res) =>{
+    const{items_id, comment}=req.body
+    const tempPath = req.file.path;
+    const targetPath = path.join(
+        __dirname,
+        "./public/comments_img/" + req.file.originalname
+        );
+        
+        fs.rename(tempPath, targetPath, (err) => {
+            if (err) console.log(err);
+        })
+        await prisma.comments.create({
+            data:{
+                comment,
+                items_id:Number(items_id),
+                img: req.file.originalname,
+                users_id:user.id
+            }
+        })
+    res.redirect(`/comment/${Number(items_id)}/`)
 })
